@@ -1,0 +1,32 @@
+.data 
+
+vetor : .space 40
+.text 
+
+
+la $s0, vetor
+add $a0, $zero, $s0
+addi $t4, $t4, 1
+
+# ler o tamanho do vetor
+	addi $v0, $zero, 5
+	syscall
+	add $t3, $t3, $v0
+	
+read:
+	
+	# Ler os valores
+	addi $v0, $zero, 5
+	syscall
+	sw $v0, 0($a0)
+	
+	
+	sll $t0, $t4, 2
+	add $a0, $a0, $t0
+	
+	addi $t2, $t2, 1
+	slt $t0, $t2, $t3
+	bne $t0, $zero, read
+	beq $t0, $zero, Exit_r
+
+Exit_r:
