@@ -1,6 +1,7 @@
 .data 
 
 vetor : .space 40
+frase:	.asciiz "\n Informe o número que deseja remover:"
 .text 
 
 
@@ -30,3 +31,18 @@ read:
 	beq $t0, $zero, Exit_r
 
 Exit_r:
+
+#informar o valor para remoção
+la $a0, frase
+addi $v0, $0, 4
+syscall
+
+li $v0, 5
+syscall
+add $s1, $v0, $0 # o número a ser removido tá no registrador $s1
+
+
+	
+	
+
+
