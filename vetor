@@ -8,7 +8,7 @@ frase:	.asciiz "\n Informe o número que deseja remover:"
 la $s0, vetor
 add $a0, $zero, $s0
 addi $t4, $t4, 1
-
+	
 # ler o tamanho do vetor
 	addi $v0, $zero, 5
 	syscall
@@ -39,10 +39,50 @@ syscall
 
 li $v0, 5
 syscall
-add $s1, $v0, $0 # o número a ser removido tá no registrador $s1
+add $s1, $v0, $0 			# o número a ser removido tá no registrador $s1
 
+addi $t1, $t1, -1 			#criando iterador para o segundo loop
+add $a0, $0, $s0
+addi $t4, $t4, 1
 
+Loop:
+	addi $t1, $t1, 1
+	beq $t1, $t3, Exit
+	
+	lw $t5, 0($a0)
+	beq $t5, $s1, Remover
+	j Deslocamento
+	
+Deslocamento:
+	sll $t0, $t4, 1
+	add $a0, $a0, $t0
+	j Loop
+	
+Remover:
+	li $t6, -1
+	sw $t6, 0($a0)
+	j Deslocamento
+
+Exit:
+
+addi $t1, $0, 0
+add $a1, $0, $s0
+addi $t4, $0, 1
+
+Loop2:
+	lw $t2 0($a1)
+	
+	li $v0, 1
+	move $a0, $t2
+	syscall
+	
+	sll $t0, $t4, 2
+	add $a1, $a1, $t0
+	
+	addi $t1, $t1, 1
+	bne $t1, $t3, Loop2
+	j Exitl
+Exitl:
 	
 	
-
-
+	
