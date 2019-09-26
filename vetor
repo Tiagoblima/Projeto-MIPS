@@ -2,28 +2,38 @@
 
 vetor : .space 40
 frase:	.asciiz "\n Informe o número que deseja remover:"
+frase_1: .asciiz "\n Informe o tamanho do vetor: "
+frase_2: .asciiz "\n Informe os valores: "
+warning: .asciiz "\n O valor não está no vetor"
+dash: .asciiz "-"
 .text 
 
-
 la $s0, vetor
-add $a0, $zero, $s0
+add $a2, $zero, $s0
 addi $t4, $t4, 1
 	
+	la $a0, frase_1
+	addi $v0, $0, 4
+	syscall
+
 # ler o tamanho do vetor
 	addi $v0, $zero, 5
 	syscall
 	add $t3, $t3, $v0
 	
 read:
+	la $a0, frase_2
+	addi $v0, $0, 4
+	syscall
 	
 	# Ler os valores
 	addi $v0, $zero, 5
 	syscall
-	sw $v0, 0($a0)
+	sw $v0, 0($a2)
 	
 	
 	sll $t0, $t4, 2
-	add $a0, $a0, $t0
+	add $a2, $a2, $t0
 	
 	addi $t2, $t2, 1
 	slt $t0, $t2, $t3
@@ -65,24 +75,44 @@ Remover:
 
 Exit:
 
+addi $t0, $zero, 1
+bne $s4, $t0, warn
+j Loop2
+warn:
+la $a0, warning
+addi $v0, $0, 4
+syscall
+
+
 addi $t1, $0, 0
 add $a1, $0, $s0
 addi $t4, $0, 1
 
+add $s4, $zero, $s4
 Loop2:
+	
+	
 	lw $t2 0($a1)
+	
+	beq $t2, -1, desloc
 	
 	li $v0, 1
 	move $a0, $t2
 	syscall
 	
-	sll $t0, $t4, 2
-	add $a1, $a1, $t0
-	
-	addi $t1, $t1, 1
-	bne $t1, $t3, Loop2
+	la $a0, dash
+	addi $v0, $0, 4
+	syscall
+
+	desloc:
+		addi $s4, $zero, 1
+		sll $t0, $t4, 2
+		add $a1, $a1, $t0
+		
+		addi $t1, $t1, 1
+		bne $t1, $t3, Loop2
 	j Exitl
 Exitl:
-	
-	
-	
+
+
+Exit2:
