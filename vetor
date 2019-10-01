@@ -1,14 +1,17 @@
 .data 
 
 vetor : .space 40
+novo_vetor: .space 40
 frase:	.asciiz "\n Informe o número que deseja remover:"
 frase_1: .asciiz "\n Informe o tamanho do vetor: "
 frase_2: .asciiz "\n Informe os valores: "
-warning: .asciiz "\n O valor não está no vetor"
+warning: .asciiz "\n O valor não está no vetor\n"
 dash: .asciiz "-"
 .text 
 
 la $s0, vetor
+la $s3, novo_vetor
+add $a3, $s3, $t0
 add $a2, $zero, $s0
 addi $t4, $t4, 1
 	
@@ -69,6 +72,7 @@ Deslocamento:
 	j Loop
 	
 Remover:
+	addi $s4, $s4, 1
 	li $t6, -1
 	sw $t6, 0($a0)
 	j Deslocamento
@@ -76,24 +80,28 @@ Remover:
 Exit:
 
 addi $t0, $zero, 1
-bne $s4, $t0, warn
-j Loop2
+beq $s4, $0, warn
+j prep
+
 warn:
 la $a0, warning
 addi $v0, $0, 4
 syscall
+j prep
 
-
+prep:
 addi $t1, $0, 0
 add $a1, $0, $s0
 addi $t4, $0, 1
 
 add $s4, $zero, $s4
+j Loop2
+
+
 Loop2:
 	
 	
-	lw $t2 0($a1)
-	
+	lw $t2 ($a1)
 	beq $t2, -1, desloc
 	
 	li $v0, 1
@@ -112,6 +120,8 @@ Loop2:
 		addi $t1, $t1, 1
 		bne $t1, $t3, Loop2
 	j Exitl
+	
+
 Exitl:
 
 
