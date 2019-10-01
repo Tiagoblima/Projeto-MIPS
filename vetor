@@ -58,6 +58,7 @@ add $s1, $v0, $0 			# o número a ser removido tá no registrador $s1
 addi $t1, $t1, -1 			#criando iterador para o segundo loop
 add $a0, $0, $s0
 addi $t4, $t4, 1
+addi $t7, $0, 0 #criando um contador para o novo vetor
 
 add $a2, $zero, $s3
 add $s6, $zero, $t3 #tamanho do vetor
@@ -72,6 +73,7 @@ Loop:
 	sw $t5 ($a2)
 	sll $t0, $t4, 1
 	add $a2, $a2, $t0
+	add $t7, $t7, 1 #incremetando o contador do novo vetor
 	
 	j Deslocamento
 	
@@ -108,7 +110,14 @@ add $t3, $s6, $zero
 add $s4, $zero, $s4
 j Loop2
 
-
+s_dash: 
+		
+		la $a0, dash
+		addi $v0, $0, 4
+		syscall
+		
+		j Loop2
+		
 Loop2:
 	
 	
@@ -129,17 +138,29 @@ Loop2:
 		addi $t1, $t1, 1
 		bne $t1, $t3, s_dash
 		
-		s_dash: 
 		
-		la $a0, dash
-		addi $v0, $0, 4
-		syscall
-		
-		j Loop2
 	j Exitl
 	
 
 Exitl:
 
+add $a2, $zero, $s3
+addi $t1, $0, -1 
+addi $t4, $0, 1
+j Lendo_novo_vetor
+
+Lendo_novo_vetor:
+
+	addi $t1, $t1, 1
+	beq $t1, $t7, Exit2
+	
+	lw $t5 ($a2)
+	li $v0, 1
+	move $a0, $t5
+	syscall
+	
+	sll $t0, $t4, 2	
+	add $a2, $a2, $t0
+	j Lendo_novo_vetor
 
 Exit2:
