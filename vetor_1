@@ -1,0 +1,185 @@
+.data 
+
+vetor : .space 40
+novo_vetor: .space 40
+frase:	.asciiz "\n Informe o número que deseja remover:"
+frase_1: .asciiz "\n Informe o tamanho do vetor: "
+frase_2: .asciiz "\n Informe os valores: "
+warning: .asciiz "\n O valor não está no vetor\n"
+dash: .asciiz "-"
+.text 
+
+la $s0, vetor
+la $s3, novo_vetor
+add $a3, $s3, $t0
+add $a2, $zero, $s0
+addi $t4, $t4, 1
+
+	
+	la $a0, frase_1
+	addi $v0, $0, 4
+	syscall
+
+# ler o tamanho do vetor
+	addi $v0, $zero, 5
+	syscall
+	add $t3, $t3, $v0
+	
+read:
+	la $a0, frase_2
+	addi $v0, $0, 4
+	syscall
+	
+	# Ler os valores
+	addi $v0, $zero, 5
+	syscall
+	sw $v0, 0($a2)
+	
+	# incremento
+	sll $t0, $t4, 2
+	add $a2, $a2, $t0
+	
+	addi $t2, $t2, 1
+	slt $t0, $t2, $t3
+	bne $t0, $zero, read
+	beq $t0, $zero, Exit_r
+
+Exit_r:
+
+#informar o valor para remoção
+la $a0, frase
+addi $v0, $0, 4
+syscall
+
+# o número a ser removido tá no registrador $s1
+li $v0, 5
+syscall
+add $s1, $v0, $0 	
+		
+#criando iterador para o segundo loop
+addi $t1, $t1, -1 			
+add $a0, $0, $s0
+addi $t4, $t4, 1
+addi $t7, $0, 0 #criando um contador para o novo vetor
+
+add $a2, $zero, $s3
+add $s6, $zero, $t3 #tamanho do vetor
+add $s2, $zero, $zero #tamanho do novo vetor
+Loop:
+	addi $t1, $t1, 1
+	beq $t1, $t3, Exit
+	
+	lw $t5, 0($a0)
+	beq $t5, $s1, Remover
+	
+	# Armazena valores não removidos em um novo vetor cuja a base está em $a2
+	sw $t5 ($a2)
+	sll $t0, $t4, 1
+	add $a2, $a2, $t0
+<<<<<<< HEAD
+	addi $s2, $s2, 1
+=======
+	add $t7, $t7, 1 #incremetando o contador do novo vetor
+	
+>>>>>>> e92529138dac8966322e97dbee0430538ad18754
+	j Deslocamento
+	
+Deslocamento:
+	sll $t0, $t4, 1
+	add $a0, $a0, $t0
+	
+	j Loop
+	
+Remover:
+	# Substitui o valor removido por -1 na memória
+	addi $s4, $s4, 1
+	li $t6, -1
+	addi $s6, $s6, -1
+	sw $t6, 0($a0)
+	j Deslocamento
+
+Exit:
+
+# Alerta o usuário se o valor removido não 
+#estiver no vetor
+addi $t0, $zero, 1
+beq $s4, $0, warn
+j prep
+
+warn:
+la $a0, warning
+addi $v0, $0, 4
+syscall
+j prep
+
+# Prepara os registradores a serem utlizados como o incremento e o endereço base de memória
+prep:
+addi $t1, $0, 0
+add $a1, $0, $s3
+addi $t4, $0, 1
+add $t3, $s6, $zero
+add $s4, $zero, $s4
+add $t6, $zero, $zero
+j Loop2
+
+s_dash: 
+		
+		la $a0, dash
+		addi $v0, $0, 4
+		syscall
+		
+		j Loop2
+		
+Loop2:
+	
+	# Mostra os valores no novo vetor
+	lw $t2 ($a1)
+	
+	li $v0, 1
+	move $a0, $t2
+	syscall
+	
+
+	desloc:
+		
+		# Faz  o deslocamento necessário
+		addi $s4, $zero, 1
+		sll $t0, $t4, 2
+		add $a1, $a1, $t0
+		addi $t6, $t6, 1
+	
+		# imprime uma dash para separar os valores
+		addi $t1, $t1, 1
+		bne $t1, $t3, s_dash
+		
+		
+<<<<<<< HEAD
+		bne $t6, $s2, Loop2
+		j Exitl
+=======
+	j Exitl
+>>>>>>> e92529138dac8966322e97dbee0430538ad18754
+	
+
+Exitl:
+
+add $a2, $zero, $s3
+addi $t1, $0, -1 
+addi $t4, $0, 1
+j Lendo_novo_vetor
+
+Lendo_novo_vetor:
+
+	addi $t1, $t1, 1
+	beq $t1, $t7, Exit2
+	
+	lw $t5 ($a2)
+	li $v0, 1
+	move $a0, $t5
+	syscall
+	
+	sll $t0, $t4, 2	
+	add $a2, $a2, $t0
+	j Lendo_novo_vetor
+
+Exit2:
