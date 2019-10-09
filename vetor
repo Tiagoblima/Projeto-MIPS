@@ -6,6 +6,7 @@ frase:	.asciiz "\n Informe o número que deseja remover:"
 frase_1: .asciiz "\n Informe o tamanho do vetor: "
 frase_2: .asciiz "\n Informe os valores: "
 warning: .asciiz "\n O valor não está no vetor\n"
+quinze: .asciiz "\n Informe um número maior ou igual a 15\n"
 dash: .asciiz "-"
 .text 
 
@@ -14,16 +15,28 @@ la $s3, novo_vetor
 add $a3, $s3, $t0
 add $a2, $zero, $s0
 addi $t4, $t4, 1
+li $s5, 15
 
-	
+# ler o tamanho do vetor se ele for maior que 15
+
+tamanhoVetor:	
 	la $a0, frase_1
 	addi $v0, $0, 4
 	syscall
 
-# ler o tamanho do vetor
 	addi $v0, $zero, 5
 	syscall
-	add $t3, $t3, $v0
+	slt $t3, $v0, $s5
+	beq $t3, 1, avisoVetor
+	add $t3, $0, $v0
+	j read
+
+avisoVetor:
+
+	la $a0, quinze
+	addi $v0, $0, 4
+	syscall
+	j tamanhoVetor
 	
 read:
 	la $a0, frase_2
@@ -104,7 +117,7 @@ warn:
 la $a0, warning
 addi $v0, $0, 4
 syscall
-j prep
+j Exit2
 
 # Prepara os registradores a serem utlizados como o incremento e o endereço base de memória
 prep:
